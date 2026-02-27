@@ -1,61 +1,20 @@
-import KickWebSocket, { type EventHandler } from 'kick-wss';
+import KickWebSocket, { type EventHandler, LEGACY_EVENT_MAPPING, KICK_EVENTS, type KickEventType } from 'kick-wss';
 import { definePlugin, type PluginContext } from 'bun_plugins';
+import { parseKickMessage, emitEvents } from './utils';
 
-const username = process.env.KICK_USERNAME || 'melserngi';
 
-let kickWS: KickWebSocket;
-
-// Legacy event type mapping - maps backend event names to simpler names
-const LEGACY_EVENT_MAP: Record<string, string> = {
-    "App\\Events\\ChatMessageEvent": "ChatMessage",
-    "App\\Events\\MessageDeletedEvent": "MessageDeleted",
-    "App\\Events\\UserBannedEvent": "UserBanned",
-    "App\\Events\\UserUnbannedEvent": "UserUnbanned",
-    "App\\Events\\SubscriptionEvent": "Subscription",
-    "App\\Events\\GiftedSubscriptionsEvent": "GiftedSubscriptions",
-    "App\\Events\\PinnedMessageCreatedEvent": "PinnedMessageCreated",
-    "App\\Events\\StreamHostEvent": "StreamHost",
-    "App\\Events\\PollUpdateEvent": "PollUpdate",
-    "App\\Events\\PollDeleteEvent": "PollDelete",
-    "App\\Events\\RewardRedeemedEvent": "RewardRedeemed",
-    "App\\Events\\KicksGiftedEvent": "KicksGifted",
-};
-
-// Parse a raw Kick WebSocket message
-function parseKickMessage(rawMessage: string): { type: string; data: unknown } | null {
-    try {
-        const parsed = JSON.parse(rawMessage);
-        
-        if (!parsed.event || parsed.event.startsWith("pusher:")) {
-            return null;
-        }
-
-        // Map legacy event type to simpler name
-        const eventType = LEGACY_EVENT_MAP[parsed.event] || parsed.event;
-        
-        // Parse the data field (it's a JSON string)
-        let eventData: unknown;
-        try {
-            eventData = parsed.data ? JSON.parse(parsed.data) : {};
-        } catch {
-            eventData = parsed.data || {};
-        }
-
-        return { type: eventType, data: eventData };
-    } catch (error) {
-        return null;
-    }
-}
-
+let kickWS: KickWebSocket | null = null;
+const defaulname = 'melserngi';
 export default definePlugin({
     name: 'kick_plugin',
     version: '1.0.0',
-    onLoad(context) {
+    async onLoad(context) {
+        const username = await context.storage.get('username', defaulname);
         // Create instance if not exists or not connected
-        if (!kickWS || !kickWS.isConnected()) {
+        if (!kickWS) {
             kickWS = new KickWebSocket({ debug: true });
-            setupEvents(kickWS, (data) => {
-                console.log("data", data);
+            setupEvents(username || defaulname, (data) => {
+                //console.log("data", data);
                 emitEvents(context, data);
             });
         }
@@ -67,54 +26,51 @@ export default definePlugin({
     },
 });
 
-function setupEvents(kickWS: KickWebSocket, callback: EventHandler<unknown>) {
+function setupEvents(username: string, callback: EventHandler<unknown>) {
     try {
+        if (!kickWS?.isConnected()) {
+            kickWS?.connect(username);
+        }
         // Connect to a channel
-        kickWS.connect(username);
-
-        // Listen to raw messages for better parsing
-        kickWS.on('rawMessage', (message: unknown) => {
-            if (typeof message === 'string') {
-                const parsed = parseKickMessage(message);
-                if (parsed) {
-                    console.log(`📨 Parsed event: ${parsed.type}`);
-                    callback(parsed);
-                }
-            }
+        
+        // Listen to all known events
+        KICK_EVENTS.forEach((event) => {
+            kickWS?.on(event, (data: unknown) => {
+                const ignoredEvents = ['rawMessage', 'rawEvent', 'ready', 'disconnect', 'error'];
+                //handle events if not exist on KICK_EVENTS but exist on LEGACY_EVENT_MAPPING
+                if (event === 'rawMessage'){
+                    const parsedData = parseKickMessage(String(data));
+                    if (parsedData && !KICK_EVENTS.includes(parsedData.type)) {
+                        callback(parsedData);
+                    }
+                };
+                if (ignoredEvents.includes(event)){return};
+                callback({ type: event, data });
+            });
         });
-
         // Listen to connection events
-        kickWS.on('ready', () => {
-            console.log('✅ Successfully connected');
+        kickWS?.on('ready', () => {
+            console.log('[KICK:READY]');
         });
 
-        kickWS.on('disconnect', ({ reason }: { reason?: string }) => {
-            console.log('❌ Disconnected:', reason);
+        kickWS?.on('disconnect', ({ reason }: { reason?: string }) => {
+            console.log('[KICK:DISCONNECT]', reason);
         });
 
-        kickWS.on('error', (error: Error) => {
-            console.error('⚠️ Error:', error);
+        kickWS?.on('error', (error: Error) => {
+            console.error('[KICK:ERROR]', error);
         });
     }
     catch (error) {
-        console.error('⚠️ Error:', error);
-    }
-}
-
-// Type guard for validating Kick event data structure
-function isKickEventData(data: unknown): data is { type: string; data: unknown } {
-    return typeof data === 'object' && data !== null && 'type' in data && 'data' in data;
-}
-
-function emitEvents(context: PluginContext, data: unknown) {
-    if (isKickEventData(data)) {
-        context.emit("kick", { eventName: data.type, data: data.data });
+        console.error('[KICK:ERROR]', error);
     }
 }
 
 if (import.meta.main) {
-    const kickWS = new KickWebSocket({ debug: true });
-    setupEvents(kickWS, (data) => {
-        console.log("📨 Event:", data);
-    });
+    if (!kickWS) {
+        kickWS = new KickWebSocket({ debug: true });
+        setupEvents(defaulname, (data) => {
+            console.log("data", data);
+        });
+    }
 }
