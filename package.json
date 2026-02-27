@@ -1,5 +1,6 @@
 {
   "name": "kick_plugin",
+  "description": "kick plugin emit events in context",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -12,5 +13,9 @@
   "dependencies": {
     "bun_plugins": "^1.2.5",
     "kick-wss": "^1.0.5"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist",
+    "start": "bun ./src/index.ts"
   }
 }
