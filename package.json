@@ -1,0 +1,16 @@
+{
+  "name": "kick_plugin",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "bun_plugins": "^1.2.5",
+    "kick-wss": "^1.0.5"
+  }
+}
