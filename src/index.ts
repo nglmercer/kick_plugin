@@ -1,19 +1,57 @@
-import KickWebSocket, { type EventHandler, LEGACY_EVENT_MAPPING, KICK_EVENTS, type KickEventType } from 'kick-wss';
-import { definePlugin, type PluginContext } from 'bun_plugins';
+import KickWebSocket, { type EventHandler, KICK_EVENTS } from 'kick-wss';
+import { type PluginContext } from 'bun_plugins';
 import { parseKickMessage, emitEvents } from './utils';
-
+import type { IPlugin, PluginBuilder, PluginPermission } from  'bun_plugins';
+import { z } from "zod";
+/**
+ * Abstract base class for Plugins to extend.
+ * Provides default implementations for optional methods.
+ */
+export declare abstract class Plugin implements IPlugin {
+    abstract name: string;
+    abstract version: string;
+    description?: string;
+    author?: string;
+    dependencies?: Record<string, string>;
+    permissions?: PluginPermission[];
+    allowedDomains?: string[];
+    configSchema?: z.ZodSchema;
+    defaultConfig?: Record<string, any>;
+    onLoad(context: PluginContext): Promise<void> | void;
+    onUnload(): Promise<void> | void;
+    onStarted(): Promise<void> | void;
+    onReload(context: PluginContext): Promise<void> | void;
+    setup(build: PluginBuilder): void | Promise<void>;
+}
+/**
+ * Helper function to define a plugin object with type inference.
+ * Useful for functional-style plugin definitions.
+ */
+export declare function definePlugin(plugin: IPlugin): IPlugin;
+//# sourceMappingURL=Plugin.d.ts.map
 
 let kickWS: KickWebSocket | null = null;
-const defaulname = 'melserngi';
+const defaultName = 'melserngi';
 export default definePlugin({
     name: 'kick_plugin',
     version: '1.0.0',
     async onLoad(context) {
-        const username = await context.storage.get('username', defaulname);
+        const username = await context.storage.get('username', defaultName);
         // Create instance if not exists or not connected
         if (!kickWS) {
             kickWS = new KickWebSocket({ debug: true });
-            setupEvents(username || defaulname, (data) => {
+            setupEvents(username || defaultName, (data) => {
+                //console.log("data", data);
+                emitEvents(context, data);
+            });
+        }
+    },
+    async onReload(context) {
+        const username = await context.storage.get('username', defaultName);
+        if (kickWS) {
+            kickWS.disconnect();
+            kickWS = new KickWebSocket({ debug: true });
+            setupEvents(username || defaultName, (data) => {
                 //console.log("data", data);
                 emitEvents(context, data);
             });
@@ -22,6 +60,7 @@ export default definePlugin({
     onUnload() {
         if (kickWS) {
             kickWS.disconnect();
+            kickWS = null;
         }
     },
 });
@@ -69,7 +108,7 @@ function setupEvents(username: string, callback: EventHandler<unknown>) {
 if (import.meta.main) {
     if (!kickWS) {
         kickWS = new KickWebSocket({ debug: true });
-        setupEvents(defaulname, (data) => {
+        setupEvents(defaultName, (data) => {
             console.log("data", data);
         });
     }

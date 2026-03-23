@@ -5,7 +5,7 @@
     "": {
       "name": "kick_plugin",
       "dependencies": {
-        "bun_plugins": "^1.2.5",
+        "bun_plugins": "^1.2.7",
         "kick-wss": "^1.0.5",
       },
       "devDependencies": {
@@ -31,7 +31,7 @@
 
     "bun-types": ["bun-types@1.3.9", "", { "dependencies": { "@types/node": "*" } }, "sha512-+UBWWOakIP4Tswh0Bt0QD0alpTY8cb5hvgiYeWCMet9YukHbzuruIEeXC2D7nMJPB12kbh8C7XJykSexEqGKJg=="],
 
-    "bun_plugins": ["bun_plugins@1.2.5", "", { "dependencies": { "arktype": "^2.1.0", "semver": "^7.7.3", "zod": "^4.3.5" } }, "sha512-yLnCDRiYaoJTcgDtn0xnpVSlgV0I0DJOoZJ8Kl6IpNJmW9kpaoSTmsU9XERGqORYRjWgnQQWWVbcI2u7FhqA/Q=="],
+    "bun_plugins": ["bun_plugins@1.2.7", "", { "dependencies": { "arktype": "^2.1.0", "semver": "^7.7.3", "zod": "^4.3.5" } }, "sha512-mp6p68mPoTjXuYqE0oefdXoWYznyO7AGBGAZPU0YkKp5Yqf4mN+ZmcWuMkfwmBsjGrq5Y2wcgNqjPqLcJtRGXw=="],
 
     "kick-wss": ["kick-wss@1.0.5", "", { "peerDependencies": { "typescript": ">=4.5.0" }, "optionalPeers": ["typescript"] }, "sha512-vr5yfYI24W1nqlQjxOtKxuQC0ITUFDlcrFOd3liz7EKSm1ZTCnwG5xWZQCr3V8iUemXKbPGz7/Nx9H4jUsB+eA=="],
 

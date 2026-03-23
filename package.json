@@ -11,11 +11,11 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "bun_plugins": "^1.2.5",
+    "bun_plugins": "^1.2.7",
     "kick-wss": "^1.0.5"
   },
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist",
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun --entry-naming \"[dir]/kick_plugin.[ext]\"",
     "start": "bun ./src/index.ts"
   }
 }
