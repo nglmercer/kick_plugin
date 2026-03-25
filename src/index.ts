@@ -3,7 +3,7 @@ import { type PluginContext, type IPlugin } from 'bun_plugins';
 import { parseKickMessage, emitEvents } from './utils';
 
 let kickWS: KickWebSocket | null = null;
-//remplaze this for your username storage\plugins\kick_plugin
+//remplaze this for your username storage\plugins\kick_plugin\storage.json
 const defaultName = 'melserngi';
 export class KickPlugin implements IPlugin {
     name: string = 'kick_plugin';
