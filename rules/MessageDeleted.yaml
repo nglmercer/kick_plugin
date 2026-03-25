@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: MessageDeleted
+  id: 80a87c34-ac73-4f5e-ba4f-685353a24dc2
+  description: Log when MessageDeleted event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT MessageDeleted triggered

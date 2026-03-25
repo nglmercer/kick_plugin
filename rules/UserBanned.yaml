@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: UserBanned
+  id: 6e3e1ad0-81d1-47ac-b728-12af33d3043e
+  description: Log when UserBanned event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT UserBanned triggered

@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: PinnedMessageCreated
+  id: 60f58d9b-9c3e-4d37-bcc1-32a2e5553ee2
+  description: Log when PinnedMessageCreated event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT PinnedMessageCreated triggered

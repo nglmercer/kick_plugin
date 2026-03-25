@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: subscriptionSucceeded
+  id: 239e455b-5d07-4ce0-aef4-c8c64316e3c4
+  description: Log when subscriptionSucceeded event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT subscriptionSucceeded triggered

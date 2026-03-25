@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: RewardRedeemed
+  id: 8316686b-5e15-47ac-b887-9eab2cc76747
+  description: Log when RewardRedeemed event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT RewardRedeemed triggered

@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: UserUnbanned
+  id: b45a934f-d745-456e-b959-fcd2ec0a136d
+  description: Log when UserUnbanned event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT UserUnbanned triggered

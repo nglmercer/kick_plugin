@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: ChatMessage
+  id: 1dcbb7ec-c26b-4cc0-9c91-49f291661ea6
+  description: Log when ChatMessage event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT ChatMessage triggered

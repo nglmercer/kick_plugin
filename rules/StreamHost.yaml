@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: StreamHost
+  id: ddfe9c7f-fbd8-461b-b6d9-b8d0f7365cf5
+  description: Log when StreamHost event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT StreamHost triggered

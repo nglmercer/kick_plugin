@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: error
+  id: 0083fb3b-6484-460b-98fc-a1132c166481
+  description: Log when error event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT error triggered

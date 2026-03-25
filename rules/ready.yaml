@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: ready
+  id: 8045027a-6f73-4afa-a44a-81a7c486b401
+  description: Log when ready event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT ready triggered

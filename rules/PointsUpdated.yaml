@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: PointsUpdated
+  id: 765227f7-1f90-4575-b709-f54741246ae3
+  description: Log when PointsUpdated event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT PointsUpdated triggered

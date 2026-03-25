@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: PollDelete
+  id: 3784ebfa-9b1a-4112-b034-5306a5189643
+  description: Log when PollDelete event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT PollDelete triggered

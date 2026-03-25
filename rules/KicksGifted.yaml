@@ -1,0 +1,9 @@
+- enabled: true
+  priority: 0
+  on: KicksGifted
+  id: 6ae0c647-e2cf-49d2-bc59-81403868ef5b
+  description: Log when KicksGifted event is triggered from kick
+  do:
+    type: log
+    params:
+      message: KICK_EVENT KicksGifted triggered
