@@ -1,19 +1,22 @@
-import KickWebSocket, { type EventHandler, LEGACY_EVENT_MAPPING, KICK_EVENTS, type KickEventType } from 'kick-wss';
-import { definePlugin, type PluginContext } from 'bun_plugins';
+import KickWebSocket, { type EventHandler, KICK_EVENTS } from 'kick-wss';
+import { type PluginContext, type IPlugin } from 'bun_plugins';
 import { parseKickMessage, emitEvents } from './utils';
 
-
 let kickWS: KickWebSocket | null = null;
+//remplaze this for your username storage\plugins\kick_plugin
 const defaultName = 'melserngi';
-export class KickPlugin {
+export class KickPlugin implements IPlugin {
     name: string = 'kick_plugin';
     version: string = '1.0.0';
     description: string = 'A plugin for interacting with Kick.com';
+    defaultConfig: Record<string, any> = {KICK_EVENTS};
     async onLoad(context: PluginContext) {
         const username = await context.storage.get('username', defaultName);
         if (username === defaultName) {
             await context.storage.set('username', defaultName);
         }
+        const EMITED_EVENTS = 'EMITED_EVENTS';
+        context.emit(EMITED_EVENTS, {KICK_EVENTS});
         // Create instance if not exists or not connected
         if (!kickWS) {
             kickWS = new KickWebSocket({ debug: true });
